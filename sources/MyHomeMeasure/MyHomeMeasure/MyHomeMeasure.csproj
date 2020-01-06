@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.2" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.5.1" />
+    <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -22,5 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
+    <Folder Include="Utl\" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,8 @@ using System.Net.Http;
 using System.Linq;
 using System.Text;
 using System.Net;
+using MyHomeMeasure.Models;
+using MyHomeMeasure.Utl;
 
 namespace MyHomeMeasure
 {
@@ -42,8 +44,8 @@ namespace MyHomeMeasure
 
                 log.LogInformation($"body: {bodyString}");
                 var body = JsonConvert.DeserializeObject<GetMeasureValueListRequest>(bodyString);
-                from = body.From;
-                to = body.To;
+                from = body.From?.ConvertJstToUtc();
+                to = body.To?.ConvertJstToUtc();
             }
 
             var list = await _cosmosDbService.GetMeasureValuesAsync(from, to);
@@ -54,7 +56,9 @@ namespace MyHomeMeasure
                 return new NotFoundResult();
             }
 
-            var json = JsonConvert.SerializeObject(list);
+            var result = list.Select(GetMeasureValueListResult.Create);
+
+            var json = JsonConvert.SerializeObject(result);
 
             return new ContentResult
             {
@@ -72,5 +76,37 @@ namespace MyHomeMeasure
             [JsonProperty(PropertyName = "to")]
             public DateTime? To { get; set; }
         }
+
+        public class GetMeasureValueListResult
+        {
+            [JsonProperty(PropertyName = "date")]
+            public DateTime Date { get; set; }
+
+            [JsonProperty(PropertyName = "temperature")]
+            public decimal Temperature { get; set; }
+
+            [JsonProperty(PropertyName = "humidity")]
+            public decimal Humidity { get; set; }
+
+            [JsonProperty(PropertyName = "illumination")]
+            public decimal Illumination { get; set; }
+
+            [JsonProperty(PropertyName = "movement")]
+            public decimal Movement { get; set; }
+
+            public static GetMeasureValueListResult Create(MeasureValue value)
+            {
+                return new GetMeasureValueListResult()
+                {
+                    Date = value.CreatedAt.ConvertUtcToJst(),
+                    Temperature = value.Temperature + value.TemperatureOffset,
+                    Humidity = value.Humidity + value.HumidityOffset,
+                    Illumination = value.Illumination,
+                    Movement = value.Movement
+                };
+            }
+        }
+
+
     }
 }
