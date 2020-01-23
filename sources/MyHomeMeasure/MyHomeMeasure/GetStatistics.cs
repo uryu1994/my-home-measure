@@ -57,10 +57,12 @@ namespace MyHomeMeasure
                 _ => throw new ArgumentNullException("Nullの可能性あり")
             }).ConvertJstToUtc();
 
+            log.LogInformation($"Now:{nowDate: yyyy/MM/dd HH:mm:ss}  From:{from: yyyy/MM/dd HH:mm:ss}  To: {to: yyyy/MM/dd HH:mm:ss}");
+
             var list = await _cosmosDbService.GetMeasureValuesAsync(from, to);
 
             // TODO: CosmosDBのLINQにGroupByが入ったらそっちを使いたい
-            var result = list.GroupBy(e => e.CreatedAt.ConvertUtcToJst().Date)
+            var result = list.ToList().GroupBy(e => e.CreatedAt.ConvertUtcToJst().Date)
                        .Select(e => new MeasureMinMaxValue
                        {
                            Date = e.Key,
