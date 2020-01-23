@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using MyHomeMeasure.Models;
+using MyHomeMeasure.Utl;
 
 namespace MyHomeMeasure.Services
 {
@@ -46,7 +47,7 @@ namespace MyHomeMeasure.Services
 
             if (to != null)
             {
-                query = query.Where(e => e.CreatedAt <= to);
+                query = query.Where(e => e.CreatedAt < to);
             }
 
             var iterator = query.OrderByDescending(e => e.CreatedAt).ToFeedIterator();
