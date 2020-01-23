@@ -29,9 +29,9 @@ namespace MyHomeMeasure.Utl
 
         public static DateTime GetFirstDayOfWeek(this DateTime date)
         {
-            while(date.DayOfWeek == DayOfWeek.Sunday)
+            while(date.DayOfWeek != DayOfWeek.Sunday)
             {
-                date = GetFirstDayOfMonth(date.AddDays(-1));
+                date = GetFirstDayOfWeek(date.AddDays(-1));
             }
 
             return date;
